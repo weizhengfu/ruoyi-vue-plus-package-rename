@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:writing-plans:*)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Skill(superpowers:subagent-driven-development:*)",
+      "Bash(mvn dependency:tree:*)",
+      "Bash(mvn:*)",
+      "Bash(git add:*)",
+      "Bash(git init:*)",
+      "Bash(git commit:*)",
+      "Bash(findstr:*)"
+    ]
+  }
+}
