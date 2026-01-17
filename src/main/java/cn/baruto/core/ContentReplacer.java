@@ -19,32 +19,14 @@ public class ContentReplacer {
 
     private String replacePackageName(String content, String moduleName) {
         String result = content;
-        if (PathUtils.isRetainModule(moduleName, config.getRetainModules())) {
-            result = replaceModulePrefixOnly(result);
-        } else {
-            result = result.replaceAll("org.dromara", config.getTargetPackageName());
-            if (config.getRetainModules() != null) {
-                for (String retain : config.getRetainModules()) {
-                    String wrongPattern = config.getTargetPackageName() + "." + retain;
-                    String correctPattern = "org.dromara." + retain;
-                    result = result.replaceAll(wrongPattern, correctPattern);
-                }
-            }
-        }
-        return result;
-    }
-
-    private String replaceModulePrefixOnly(String content) {
-        String result = content;
-        if (StrUtil.isNotBlank(config.getOldPrefix()) && StrUtil.isNotBlank(config.getNewPrefix())) {
-            result = result.replaceAll("<artifactId>" + config.getOldPrefix() + "-", "<artifactId>" + config.getNewPrefix() + "-");
-            result = result.replaceAll("</artifactId>", "</artifactId>");
-            result = result.replaceAll("<module>" + config.getOldPrefix() + "-", "<module>" + config.getNewPrefix() + "-");
-            result = result.replaceAll("</module>", "</module>");
-        }
-        if (config.getModuleMap() != null) {
-            for (java.util.Map.Entry<String, String> entry : config.getModuleMap().entrySet()) {
-                result = result.replaceAll(entry.getKey(), entry.getValue());
+        // 先进行包名替换
+        result = result.replaceAll("org.dromara", config.getTargetPackageName());
+        // 还原保留模块的包名
+        if (config.getRetainModules() != null) {
+            for (String retain : config.getRetainModules()) {
+                String wrongPattern = config.getTargetPackageName() + "." + retain;
+                String correctPattern = "org.dromara." + retain;
+                result = result.replaceAll(wrongPattern, correctPattern);
             }
         }
         return result;

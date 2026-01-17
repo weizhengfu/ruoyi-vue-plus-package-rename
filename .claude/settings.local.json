@@ -12,7 +12,8 @@
       "Bash(git add:*)",
       "Bash(git init:*)",
       "Bash(git commit:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(wc:*)"
     ]
   }
 }
