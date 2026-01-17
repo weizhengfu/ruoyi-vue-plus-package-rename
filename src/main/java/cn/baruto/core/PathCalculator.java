@@ -17,11 +17,18 @@ public class PathCalculator {
         String relativePath = sourcePath.replace(basePath, "");
         String[] pathParts = relativePath.split("/");
 
-        if (pathParts.length > 0 && !pathParts[0].isEmpty()) {
-            String moduleName = pathParts[0];
-            pathParts[0] = PathUtils.transformModuleName(moduleName, config);
+        // 处理所有路径段中的模块名替换
+        for (int i = 0; i < pathParts.length; i++) {
+            // 跳过空字符串和已知的特殊路径
+            if (pathParts[i].isEmpty() || isSpecialPath(pathParts[i])) {
+                continue;
+            }
+
+            // 对每个路径段尝试进行模块名转换
+            pathParts[i] = PathUtils.transformModuleName(pathParts[i], config);
         }
 
+        // 处理 Java 源码路径中的包名替换
         for (int i = 0; i < pathParts.length; i++) {
             if (isInJavaSourcePath(pathParts, i) && "org".equals(pathParts[i])
                     && i + 1 < pathParts.length && "dromara".equals(pathParts[i + 1])) {
@@ -38,6 +45,18 @@ public class PathCalculator {
 
         String targetRelativePath = String.join("/", pathParts);
         return config.getOutputDirectory() + targetRelativePath;
+    }
+
+    /**
+     * 判断是否为特殊路径（不需要进行模块名替换）
+     */
+    private boolean isSpecialPath(String pathPart) {
+        return "src".equals(pathPart)
+                || "main".equals(pathPart)
+                || "java".equals(pathPart)
+                || "resources".equals(pathPart)
+                || "test".equals(pathPart)
+                || "webapp".equals(pathPart);
     }
 
     private boolean isInJavaSourcePath(String[] parts, int index) {
