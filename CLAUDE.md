@@ -44,6 +44,23 @@ zip.name=D:\\code\\RuoYi-Vue-Plus-5.X.zip
 
 ## 核心架构
 
+### 核心组件架构
+
+- **RenameConfig**: 配置模型类
+- **ConfigLoader**: 配置加载与验证
+- **ContentReplacer**: 内容替换引擎
+- **PathCalculator**: 路径计算器
+- **PathUtils**: 路径工具类
+- **FileProcessor**: 文件处理器
+- **Main**: 主入口
+
+### 处理流程
+
+1. ConfigLoader 加载并验证配置
+2. ContentReplacer 根据模块类型处理内容替换
+3. PathCalculator 计算目标文件路径
+4. FileProcessor 执行文件读写操作
+
 ### 主要处理流程
 
 程序的核心逻辑在 [Main.java](src/main/java/cn/baruto/Main.java) 中：
