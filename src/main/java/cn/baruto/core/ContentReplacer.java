@@ -4,6 +4,11 @@ import cn.baruto.config.RenameConfig;
 import cn.hutool.core.util.StrUtil;
 
 public class ContentReplacer {
+    // 使用词边界正则表达式避免误匹配
+    // 例如：不匹配 "notorg.dromara.xyz" 中的 "org.dromara"
+    private static final String PACKAGE_PATTERN = "\\borg\\.dromara(?=\\.)";
+    private static final String PACKAGE_ESCAPE = "___PKG_REPLACED___";
+
     private final RenameConfig config;
 
     public ContentReplacer(RenameConfig config) {
@@ -19,11 +24,12 @@ public class ContentReplacer {
 
     private String replacePackageName(String content, String moduleName) {
         String result = content;
-        // 先进行包名替换
-        result = result.replaceAll("org.dromara", config.getTargetPackageName());
-        // 还原保留模块的包名
+        // 第一步：使用词边界匹配进行包名替换（仅匹配后面跟着点号的 org.dromara）
+        result = result.replaceAll(PACKAGE_PATTERN, config.getTargetPackageName());
+        // 第二步：还原保留模块的包名
         if (config.getRetainModules() != null) {
             for (String retain : config.getRetainModules()) {
+                // 替换被误改的保留模块包名
                 String wrongPattern = config.getTargetPackageName() + "." + retain;
                 String correctPattern = "org.dromara." + retain;
                 result = result.replaceAll(wrongPattern, correctPattern);

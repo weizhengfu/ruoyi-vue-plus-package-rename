@@ -100,3 +100,17 @@ src/
 temp/                           # 临时解压目录（运行时生成）
 target/                         # Maven 构建输出目录
 ```
+
+## gstack
+
+Use the `/browse` skill from gstack for all web browsing. Never use `mcp__claude-in-chrome__*` tools.
+
+Available skills:
+- `/plan-ceo-review` - CEO/founder-mode plan review
+- `/plan-eng-review` - Eng manager-mode plan review
+- `/review` - Pre-landing PR review
+- `/ship` - Ship workflow
+- `/browse` - Fast headless browser for QA testing
+- `/qa` - Systematically QA test and fix bugs
+- `/setup-browser-cookies` - Import cookies from real browser
+- `/retro` - Weekly engineering retrospective

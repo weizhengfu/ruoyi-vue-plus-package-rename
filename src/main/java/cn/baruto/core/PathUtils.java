@@ -16,9 +16,12 @@ public class PathUtils {
         String basePath = normalizePath(codeDir.getAbsolutePath());
         String relativePath = path.replace(basePath, "");
         String[] parts = relativePath.split("/");
-        if (parts.length > 0) {
-            String moduleName = parts[0].replaceFirst("^/", "");
-            if (!moduleName.isEmpty()) return moduleName;
+        // 跳过空字符串（路径可能以分隔符开头）
+        for (String part : parts) {
+            String moduleName = part.replaceFirst("^/", "");
+            if (!moduleName.isEmpty()) {
+                return moduleName;
+            }
         }
         return "";
     }
