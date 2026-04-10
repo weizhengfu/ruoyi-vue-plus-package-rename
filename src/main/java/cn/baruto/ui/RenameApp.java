@@ -9,28 +9,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
+import static cn.baruto.ui.ModernUI.*;
+
 /**
- * 包名修改器 GUI 界面
+ * 包名修改器 GUI 界面 - 现代化版本
  */
 public class RenameApp extends JFrame {
 
     private static final Logger logger = LoggerFactory.getLogger(RenameApp.class);
-
-    // === 配色方案 ===
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);      // 蓝色
-    private static final Color SUCCESS_COLOR = new Color(39, 174, 96);    // 绿色
-    private static final Color BG_COLOR = new Color(236, 240, 241);        // 浅灰背景
-    private static final Color PANEL_BG = Color.WHITE;                      // 面板白色
-    private static final Color TEXT_DARK = new Color(44, 62, 80);          // 深色文字
-    private static final Color TEXT_MUTED = new Color(127, 140, 141);      // 次要文字
 
     // === 源文件配置 ===
     private JTextField zipPathField;
@@ -54,6 +50,10 @@ public class RenameApp extends JFrame {
     private JProgressBar progressBar;
     private JButton startButton;
 
+    // === 主面板引用 ===
+    private JPanel headerPanel;
+    private JPanel contentPanel;
+
     public RenameApp() {
         initUI();
     }
@@ -61,276 +61,454 @@ public class RenameApp extends JFrame {
     private void initUI() {
         setTitle("RuoYi-Vue-Plus 包名修改器");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(850, 720);
+        setSize(900, 750);
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setBackground(BG_COLOR);
+        setMinimumSize(new Dimension(800, 600));
+        getContentPane().setBackground(BG_MAIN);
 
-        // 主面板
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        mainPanel.setBackground(BG_COLOR);
+        // 设置窗口图标（可选）
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource("/icon.png"));
+            if (icon.getIconWidth() != -1) {
+                setIconImage(icon.getImage());
+            }
+        } catch (Exception e) {
+            // 忽略图标加载失败
+        }
 
-        // 标题
+        // 主布局
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(BG_MAIN);
+
+        // 1. 顶部标题区域
+        headerPanel = createHeaderPanel();
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // 2. 内容区域
+        contentPanel = createContentPanel();
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getHorizontalScrollBar().setEnabled(false);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        setContentPane(mainPanel);
+    }
+
+    private JPanel createHeaderPanel() {
+        JPanel panel = new GradientPanel(PRIMARY_COLOR, PRIMARY_DARK);
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(new EmptyBorder(25, 30, 25, 30));
+        panel.setPreferredSize(new Dimension(0, 140));
+
+        // 左侧标题
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setOpaque(false);
+
+        // 主标题
         JLabel titleLabel = new JLabel("RuoYi-Vue-Plus 包名修改器");
-        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
-        titleLabel.setForeground(PRIMARY_COLOR);
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        mainPanel.add(titleLabel);
-        mainPanel.add(Box.createVerticalStrut(5));
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 28));
+        titleLabel.setForeground(TEXT_WHITE);
+        titlePanel.add(titleLabel, BorderLayout.NORTH);
 
         // 副标题
-        JLabel subtitleLabel = new JLabel("一键批量修改 RuoYi-Vue-Plus 项目包名");
-        subtitleLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
-        subtitleLabel.setForeground(TEXT_MUTED);
-        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        mainPanel.add(subtitleLabel);
-        mainPanel.add(Box.createVerticalStrut(20));
+        JLabel subtitleLabel = new JLabel("一键批量修改 RuoYi-Vue-Plus 项目包名，快速重构代码结构");
+        subtitleLabel.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 14));
+        subtitleLabel.setForeground(new Color(255, 255, 255, 200));
+        subtitleLabel.setBorder(new EmptyBorder(8, 0, 0, 0));
+        titlePanel.add(subtitleLabel, BorderLayout.CENTER);
 
+        panel.add(titlePanel, BorderLayout.CENTER);
+
+        // 右侧版本信息
+        JPanel versionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        versionPanel.setOpaque(false);
+        JLabel versionLabel = new JLabel("v1.0");
+        versionLabel.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 12));
+        versionLabel.setForeground(new Color(255, 255, 255, 150));
+        versionPanel.add(versionLabel);
+        panel.add(versionPanel, BorderLayout.EAST);
+
+        return panel;
+    }
+
+    private JPanel createContentPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG_MAIN);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+
+        // 添加卡片式面板
+        gbc.insets = new Insets(0, 20, 15, 20);
+        
         // 1. 源文件配置
-        mainPanel.add(createSourceConfigPanel());
-        mainPanel.add(Box.createVerticalStrut(12));
+        panel.add(createSourceConfigPanel(), gbc);
+        gbc.gridy++;
 
         // 2. 包名配置
-        mainPanel.add(createPackageConfigPanel());
-        mainPanel.add(Box.createVerticalStrut(12));
+        panel.add(createPackageConfigPanel(), gbc);
+        gbc.gridy++;
 
         // 3. 项目配置
-        mainPanel.add(createProjectConfigPanel());
-        mainPanel.add(Box.createVerticalStrut(12));
+        panel.add(createProjectConfigPanel(), gbc);
+        gbc.gridy++;
 
         // 4. 模块名映射配置
-        mainPanel.add(createModuleMapPanel());
-        mainPanel.add(Box.createVerticalStrut(15));
+        panel.add(createModuleMapPanel(), gbc);
+        gbc.gridy++;
 
-        // 5. 操作面板
-        mainPanel.add(createActionPanel());
-        mainPanel.add(Box.createVerticalStrut(10));
+        // 5. 操作和日志区域
+        gbc.insets = new Insets(0, 20, 20, 20);
+        panel.add(createActionAndLogPanel(), gbc);
+        gbc.gridy++;
 
-        // 6. 日志和进度
-        mainPanel.add(createLogPanel());
-
-        // 添加滚动面板
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        setContentPane(scrollPane);
+        return panel;
     }
 
     private JPanel createSourceConfigPanel() {
-        JPanel panel = createTitledPanel("源文件配置");
+        JPanel panel = createCardPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        // 标题
+        JLabel titleLabel = new JLabel("源文件配置");
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_COLOR);
+        gbc.gridwidth = 3;
+        panel.add(titleLabel, gbc);
+        gbc.gridy++;
 
         // ZIP 文件路径
-        zipPathField = new JTextField(40);
-        JButton zipBrowseBtn = new JButton("浏览...");
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel zipLabel = createLabel("ZIP 文件：");
+        zipLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(zipLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        zipPathField = createTextField();
+        zipPathField.setPreferredSize(new Dimension(0, 36));
+        panel.add(zipPathField, gbc);
+        gbc.gridx = 2;
+        gbc.weightx = 0;
+        JButton zipBrowseBtn = createButton("浏览...", false);
+        zipBrowseBtn.setPreferredSize(new Dimension(90, 36));
         zipBrowseBtn.addActionListener(this::browseZipFile);
-        createLabelRow(panel, "ZIP 文件路径：", zipPathField, zipBrowseBtn);
+        panel.add(zipBrowseBtn, gbc);
+        gbc.gridy++;
 
         // 输出目录
-        targetPathField = new JTextField(40);
+        gbc.gridx = 0;
+        JLabel targetLabel = createLabel("输出目录：");
+        targetLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(targetLabel, gbc);
+        gbc.gridx = 1;
+        targetPathField = createTextField();
         targetPathField.setText("D:\\rename_output");
-        JButton targetBrowseBtn = new JButton("浏览...");
+        targetPathField.setPreferredSize(new Dimension(0, 36));
+        panel.add(targetPathField, gbc);
+        gbc.gridx = 2;
+        JButton targetBrowseBtn = createButton("浏览...", false);
+        targetBrowseBtn.setPreferredSize(new Dimension(90, 36));
         targetBrowseBtn.addActionListener(this::browseTargetPath);
-        createLabelRow(panel, "输出目录：", targetPathField, targetBrowseBtn);
+        panel.add(targetBrowseBtn, gbc);
 
         return panel;
     }
 
     private JPanel createPackageConfigPanel() {
-        JPanel panel = createTitledPanel("包名配置");
+        JPanel panel = createCardPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        // 标题
+        JLabel titleLabel = new JLabel("包名配置");
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_COLOR);
+        gbc.gridwidth = 3;
+        panel.add(titleLabel, gbc);
+        gbc.gridy++;
 
         // 目标包名
-        packageNameField = new JTextField(40);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel packageLabel = createLabel("目标包名：");
+        packageLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(packageLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = 2;
+        packageNameField = createTextField();
         packageNameField.setText("com.example");
-        createLabelRow(panel, "目标包名：", packageNameField, null);
+        packageNameField.setPreferredSize(new Dimension(0, 36));
+        panel.add(packageNameField, gbc);
+        gbc.gridy++;
 
         // 保留模块
-        retainModulesField = new JTextField(40);
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel retainLabel = createLabel("保留模块：");
+        retainLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(retainLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = 2;
+        retainModulesField = createTextField();
+        retainModulesField.setText("sms4j,warm");
         retainModulesField.setToolTipText("逗号分隔，如：sms4j,warm");
-        createLabelRow(panel, "保留模块：", retainModulesField, null);
+        retainModulesField.setPreferredSize(new Dimension(0, 36));
+        panel.add(retainModulesField, gbc);
 
         return panel;
     }
 
     private JPanel createProjectConfigPanel() {
-        JPanel panel = createTitledPanel("项目配置");
+        JPanel panel = createCardPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        // 标题
+        JLabel titleLabel = new JLabel("项目配置");
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_COLOR);
+        gbc.gridwidth = 3;
+        panel.add(titleLabel, gbc);
+        gbc.gridy++;
 
         // 项目名称
-        projectNameField = new JTextField(40);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel projectLabel = createLabel("项目名称：");
+        projectLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(projectLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = 2;
+        projectNameField = createTextField();
         projectNameField.setText("MyProject");
-        createLabelRow(panel, "项目名称：", projectNameField, null);
+        projectNameField.setPreferredSize(new Dimension(0, 36));
+        panel.add(projectNameField, gbc);
+        gbc.gridy++;
 
         // 项目版本
-        projectVersionField = new JTextField(40);
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel versionLabel = createLabel("项目版本：");
+        versionLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(versionLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = 2;
+        projectVersionField = createTextField();
         projectVersionField.setText("1.0.0");
-        createLabelRow(panel, "项目版本：", projectVersionField, null);
+        projectVersionField.setPreferredSize(new Dimension(0, 36));
+        panel.add(projectVersionField, gbc);
 
         return panel;
     }
 
     private JPanel createModuleMapPanel() {
-        JPanel panel = createTitledPanel("模块名映射配置");
+        JPanel panel = createCardPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
 
-        // 前缀替换
-        oldPrefixField = new JTextField(18);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        // 标题
+        JLabel titleLabel = new JLabel("模块名映射配置");
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_COLOR);
+        gbc.gridwidth = 3;
+        panel.add(titleLabel, gbc);
+        gbc.gridy++;
+
+        // 前缀替换（一行显示）
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel prefixLabel = createLabel("前缀替换：");
+        prefixLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(prefixLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 0.35;
+        oldPrefixField = createTextField();
         oldPrefixField.setText("ruoyi");
-        newPrefixField = new JTextField(18);
+        oldPrefixField.setPreferredSize(new Dimension(0, 36));
+        panel.add(oldPrefixField, gbc);
+        
+        gbc.gridx = 2;
+        gbc.weightx = 0.05;
+        JLabel arrowLabel = new JLabel("→");
+        arrowLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 16));
+        arrowLabel.setForeground(TEXT_SECONDARY);
+        arrowLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(arrowLabel, gbc);
+        
+        gbc.gridx = 3;
+        gbc.weightx = 0.35;
+        newPrefixField = createTextField();
         newPrefixField.setText("myapp");
-        createDualLabelRow(panel, "模块前缀替换：", "旧前缀", oldPrefixField, "新前缀", newPrefixField);
+        newPrefixField.setPreferredSize(new Dimension(0, 36));
+        panel.add(newPrefixField, gbc);
+        
+        gbc.gridy++;
+        gbc.gridx = 0;
 
         // 精确映射
-        moduleMapField = new JTextField(40);
-        moduleMapField.setToolTipText("格式：旧模块:新模块,旧模块:新模块，如：ruoyi-admin:myapp-server");
-        createLabelRow(panel, "精确模块映射：", moduleMapField, null);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel mapLabel = createLabel("精确映射：");
+        mapLabel.setPreferredSize(new Dimension(80, 30));
+        panel.add(mapLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = 3;
+        moduleMapField = createTextField();
+        moduleMapField.setToolTipText("格式：旧：新，旧：新");
+        moduleMapField.setPreferredSize(new Dimension(0, 36));
+        panel.add(moduleMapField, gbc);
 
         return panel;
     }
 
-    private JPanel createActionPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        panel.setBackground(BG_COLOR);
+    private JPanel createActionAndLogPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG_MAIN);
 
-        startButton = new JButton("开始处理");
-        startButton.setPreferredSize(new Dimension(150, 45));
-        startButton.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        startButton.setBackground(PRIMARY_COLOR);
-        startButton.setForeground(Color.WHITE);
-        startButton.setFocusPainted(false);
-        startButton.setBorderPainted(false);
-        startButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+
+        // 操作按钮面板
+        JPanel buttonPanel = createCardPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        buttonPanel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
+
+        startButton = createButton("开始处理", true);
+        startButton.setPreferredSize(new Dimension(180, 45));
+        startButton.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 16));
         startButton.addActionListener(this::startProcessing);
-        panel.add(startButton);
+        buttonPanel.add(startButton);
+
+        panel.add(buttonPanel, gbc);
+        gbc.gridy++;
+
+        // 日志面板
+        panel.add(createLogPanel(), gbc);
 
         return panel;
     }
 
     private JPanel createLogPanel() {
-        JPanel panel = createTitledPanel("处理日志");
-        panel.setBackground(PANEL_BG);
+        JPanel panel = createCardPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(new CompoundBorder(
+            new LineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 25, 20, 25)
+        ));
+        panel.setPreferredSize(new Dimension(0, 280));
 
-        logArea = new JTextArea(10, 70);
+        // 日志标题
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(BG_PANEL);
+        headerPanel.setBorder(new EmptyBorder(0, 0, 15, 0));
+
+        JLabel titleLabel = new JLabel("处理日志");
+        titleLabel.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_COLOR);
+        headerPanel.add(titleLabel);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // 日志区域
+        logArea = new JTextArea(10, 50);
         logArea.setEditable(false);
-        logArea.setFont(new Font("Consolas", Font.PLAIN, 12));
-        logArea.setBackground(new Color(44, 62, 80));
-        logArea.setForeground(new Color(46, 204, 113));  // 绿色文字
-        logArea.setCaretColor(Color.WHITE);
-        JScrollPane scrollPane = new JScrollPane(logArea);
-        scrollPane.setPreferredSize(new Dimension(750, 180));
-        panel.add(scrollPane);
+        logArea.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 12));
+        logArea.setBackground(new Color(40, 44, 52));
+        logArea.setForeground(new Color(152, 195, 121));
+        logArea.setCaretColor(new Color(152, 195, 121));
+        logArea.setSelectionColor(new Color(61, 68, 85));
+        logArea.setSelectedTextColor(new Color(152, 195, 121));
+        logArea.setBorder(new EmptyBorder(10, 10, 10, 10));
+        logArea.setLineWrap(true);
 
+        JScrollPane scrollPane = new JScrollPane(logArea);
+        scrollPane.setBorder(new RoundedBorder(BORDER_RADIUS, new Color(60, 63, 65)));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // 进度条
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
-        progressBar.setPreferredSize(new Dimension(750, 20));
+        progressBar.setPreferredSize(new Dimension(0, 28));
+        progressBar.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 12));
+        progressBar.setForeground(SUCCESS_COLOR);
+        progressBar.setBackground(new Color(236, 240, 241));
+        progressBar.setBorder(new RoundedBorder(BORDER_RADIUS, BORDER_COLOR));
+        progressBar.setString("就绪");
         progressBar.setVisible(false);
-        progressBar.setForeground(PRIMARY_COLOR);
-        progressBar.setBackground(new Color(200, 200, 200));
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(progressBar);
+
+        panel.add(Box.createVerticalStrut(15), BorderLayout.SOUTH);
+        panel.add(progressBar, BorderLayout.SOUTH);
 
         return panel;
-    }
-
-    private JPanel createTitledPanel(String title) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setBackground(PANEL_BG);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-
-        // 标题标签
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 14));
-        titleLabel.setForeground(PRIMARY_COLOR);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel.add(titleLabel, gbc);
-
-        // 分隔线
-        JSeparator separator = new JSeparator();
-        separator.setPreferredSize(new Dimension(700, 1));
-        separator.setForeground(new Color(200, 200, 200));
-        gbc.gridy = 1;
-        gbc.insets = new Insets(5, 0, 5, 0);
-        panel.add(separator, gbc);
-
-        return panel;
-    }
-
-    private JPanel createLabelRow(JPanel parent, String labelText, JTextField textField, JButton button) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        int nextGridy = parent.getComponentCount() / 3;  // 每行最多3个组件：label + textField + button
-
-        gbc.gridx = 0;
-        gbc.gridy = nextGridy;
-        gbc.weightx = 0;
-        parent.add(new JLabel(labelText), gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 1;
-        parent.add(textField, gbc);
-
-        if (button != null) {
-            gbc.gridx = 2;
-            gbc.weightx = 0;
-            parent.add(button, gbc);
-        }
-
-        return parent;
-    }
-
-    private JPanel createDualLabelRow(JPanel parent, String labelText, String label1, JTextField field1, String label2, JTextField field2) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        int nextGridy = parent.getComponentCount();
-
-        // 左上角标签（跨两行）
-        gbc.gridx = 0;
-        gbc.gridy = nextGridy;
-        gbc.gridheight = 2;
-        gbc.weightx = 0;
-        parent.add(new JLabel(labelText), gbc);
-
-        // 第一行标签和输入框
-        gbc.gridx = 1;
-        gbc.gridy = nextGridy;
-        gbc.gridheight = 1;
-        gbc.weightx = 0.3;
-        parent.add(new JLabel(label1), gbc);
-
-        gbc.gridx = 2;
-        gbc.weightx = 0.7;
-        parent.add(field1, gbc);
-
-        // 第二行标签和输入框
-        gbc.gridx = 1;
-        gbc.gridy = nextGridy + 1;
-        gbc.weightx = 0.3;
-        parent.add(new JLabel(label2), gbc);
-
-        gbc.gridx = 2;
-        gbc.weightx = 0.7;
-        parent.add(field2, gbc);
-
-        return parent;
     }
 
     private void browseZipFile(ActionEvent e) {
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("ZIP 文件 (*.zip)", "zip"));
+        chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("ZIP 文件 (*.zip)", "zip"));
         chooser.setDialogTitle("选择 RuoYi-Vue-Plus ZIP 文件");
+        chooser.setBackground(BG_PANEL);
+        
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             zipPathField.setText(chooser.getSelectedFile().getAbsolutePath());
         }
@@ -340,6 +518,8 @@ public class RenameApp extends JFrame {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setDialogTitle("选择输出目录");
+        chooser.setBackground(BG_PANEL);
+        
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             targetPathField.setText(chooser.getSelectedFile().getAbsolutePath());
         }
@@ -354,7 +534,11 @@ public class RenameApp extends JFrame {
         progressBar.setVisible(true);
         progressBar.setValue(0);
         progressBar.setIndeterminate(true);
-        logArea.setText("开始处理...\n");
+        progressBar.setString("正在处理...");
+        logArea.setText("");
+        logArea.append("════════════════════════════════════════\n");
+        logArea.append("  开始处理任务\n");
+        logArea.append("════════════════════════════════════════\n\n");
 
         // 使用 SwingWorker 在后台执行任务
         new SwingWorker<Void, String>() {
@@ -363,22 +547,22 @@ public class RenameApp extends JFrame {
                 try {
                     // 1. 构建配置
                     RenameConfig config = buildConfig();
-                    publish("配置加载完成\n");
+                    publish("✓ 配置加载完成\n");
 
                     // 2. 初始化处理器
                     ContentReplacer contentReplacer = new ContentReplacer(config);
                     PathCalculator pathCalculator = new PathCalculator(config);
                     FileProcessor fileProcessor = new FileProcessor(contentReplacer, pathCalculator, config);
-                    publish("处理器初始化完成\n");
+                    publish("✓ 处理器初始化完成\n");
 
                     // 3. 解压文件
-                    publish("正在解压 ZIP 文件...\n");
+                    publish("→ 正在解压 ZIP 文件...\n");
                     String codeDir = unzip(config.getZipFilePath());
                     File codeDirFile = new File(codeDir);
-                    publish("解压完成，临时目录：" + codeDir + "\n");
+                    publish("✓ 解压完成，临时目录：" + codeDir + "\n");
 
                     // 4. 遍历处理文件
-                    publish("开始处理文件...\n");
+                    publish("→ 开始处理文件...\n");
                     List<java.io.File> files = cn.hutool.core.io.FileUtil.loopFiles(codeDirFile);
                     int total = files.size();
                     int processed = 0;
@@ -387,20 +571,20 @@ public class RenameApp extends JFrame {
                         fileProcessor.processFile(file, codeDirFile);
                         processed++;
                         if (processed % 50 == 0) {
-                            publish("已处理 " + processed + "/" + total + " 个文件\n");
+                            publish("  已处理 " + processed + "/" + total + " 个文件\n");
                         }
                     }
 
-                    publish("\n所有文件处理完成！\n");
-                    publish("输出目录：" + config.getOutputDirectory() + "\n");
+                    publish("\n✓ 所有文件处理完成！\n");
+                    publish("→ 输出目录：" + config.getOutputDirectory() + "\n");
 
                     // 5. 清理临时文件
-                    publish("正在清理临时文件...\n");
+                    publish("→ 正在清理临时文件...\n");
                     cn.hutool.core.io.FileUtil.del(codeDirFile);
-                    publish("清理完成！\n");
+                    publish("✓ 清理完成！\n");
 
                 } catch (Exception ex) {
-                    publish("\n错误：" + ex.getMessage() + "\n");
+                    publish("\n✗ 错误：" + ex.getMessage() + "\n");
                     logger.error("处理文件时发生错误", ex);
                     throw ex;
                 }
@@ -419,16 +603,67 @@ public class RenameApp extends JFrame {
             protected void done() {
                 progressBar.setIndeterminate(false);
                 progressBar.setValue(100);
+                progressBar.setString("处理完成");
                 startButton.setEnabled(true);
                 try {
                     get();
-                    JOptionPane.showMessageDialog(RenameApp.this, "处理完成！", "成功", JOptionPane.INFORMATION_MESSAGE);
+                    logArea.append("\n════════════════════════════════════════\n");
+                    logArea.append("  ✓ 任务成功完成\n");
+                    logArea.append("════════════════════════════════════════\n");
+                    JOptionPane.showMessageDialog(
+                        RenameApp.this, 
+                        "处理完成！", 
+                        "成功", 
+                        JOptionPane.INFORMATION_MESSAGE,
+                        createSuccessIcon()
+                    );
                 } catch (Exception ex) {
                     logger.error("获取处理结果时发生错误", ex);
-                    JOptionPane.showMessageDialog(RenameApp.this, "处理失败：" + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+                    logArea.append("\n════════════════════════════════════════\n");
+                    logArea.append("  ✗ 任务失败\n");
+                    logArea.append("════════════════════════════════════════\n");
+                    JOptionPane.showMessageDialog(
+                        RenameApp.this, 
+                        "处理失败：" + ex.getMessage(), 
+                        "错误", 
+                        JOptionPane.ERROR_MESSAGE,
+                        createErrorIcon()
+                    );
                 }
             }
         }.execute();
+    }
+
+    private ImageIcon createSuccessIcon() {
+        // 创建简单的成功图标
+        int size = 48;
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(SUCCESS_COLOR);
+        g2d.fillOval(4, 4, size - 8, size - 8);
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawLine(14, 24, 20, 30);
+        g2d.drawLine(20, 30, 34, 16);
+        g2d.dispose();
+        return new ImageIcon(image);
+    }
+
+    private ImageIcon createErrorIcon() {
+        // 创建简单的错误图标
+        int size = 48;
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(DANGER_COLOR);
+        g2d.fillOval(4, 4, size - 8, size - 8);
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawLine(16, 16, 32, 32);
+        g2d.drawLine(32, 16, 16, 32);
+        g2d.dispose();
+        return new ImageIcon(image);
     }
 
     private boolean validateInputs() {
