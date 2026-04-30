@@ -10,7 +10,6 @@ import cn.hutool.core.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.List;
 
@@ -19,44 +18,11 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        // 如果没有命令行参数，启动 GUI 模式
         if (args.length == 0 || !args[0].equals("--cli")) {
-            startGUIMode();
+            cn.baruto.ui.App.launch(cn.baruto.ui.App.class, args);
             return;
         }
-
-        // 命令行模式
         startCLIMode();
-    }
-
-    /**
-     * 启动 GUI 模式
-     */
-    private static void startGUIMode() {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                // 尝试使用 Nimbus 外观（更现代）
-                for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                    if ("Nimbus".equals(info.getName())) {
-                        UIManager.setLookAndFeel(info.getClassName());
-                        break;
-                    }
-                }
-                // 如果 Nimbus 不可用，使用系统默认外观
-                if (UIManager.getLookAndFeel() == null ||
-                    UIManager.getLookAndFeel().getName().equals("Metal")) {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }
-            } catch (Exception e) {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception ex) {
-                    logger.warn("无法设置系统外观", ex);
-                }
-            }
-            cn.baruto.ui.RenameApp app = new cn.baruto.ui.RenameApp();
-            app.setVisible(true);
-        });
     }
 
     /**

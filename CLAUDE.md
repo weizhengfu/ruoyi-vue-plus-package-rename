@@ -4,102 +4,101 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-这是一个用于批量修改 RuoYi-Vue-Plus 项目包名的工具。它从指定的 RuoYi-Vue-Plus ZIP 包中提取代码，将所有 `org.dromara` 包名替换为自定义包名，并重新组织目录结构。
+批量修改 RuoYi-Vue-Plus 项目包名的 Java 工具。从 ZIP 包提取代码，将 `org.dromara` 替换为自定义包名，重组目录结构，输出新项目。支持 GUI（默认）和 CLI 两种模式。
 
 ## 构建与运行
 
-### 构建项目
 ```bash
-mvn clean compile
-```
+mvn clean compile                    # 编译
+mvn clean package                    # 打包 fat JAR（assembly plugin）
 
-### 打包项目
-```bash
-mvn clean package
-```
-
-### 运行程序
-```bash
-# 直接运行 Main 类
+# GUI 模式（默认，无参数启动）
 mvn exec:java -Dexec.mainClass="cn.baruto.Main"
 
-# 或先打包后运行 jar
-java -jar target/ruoyi-vue-plus-package-rename-1.0-SNAPSHOT.jar
+# CLI 模式
+mvn exec:java -Dexec.mainClass="cn.baruto.Main" -Dexec.args="--cli"
+
+# 运行打包后的 JAR
+java -jar target/ruoyi-vue-plus-package-rename-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+# 测试
+mvn test
+mvn test -Dtest=ContentReplacerTest  # 单个测试类
+
+# 打包 EXE（需要 JDK 14+ 和 WiX Toolset）
+package.bat
 ```
 
 ## 配置
 
-在运行前，必须修改 [src/main/resources/setting.properties](src/main/resources/setting.properties) 文件：
+运行前修改 [setting.properties](src/main/resources/setting.properties)：
 
 ```properties
-# 要修改的目标包名
-package.name=cn.xxx
-
-# 输出目录路径（反斜杠需要转义）
-target.path=D:\\test
-
-# RuoYi-Vue-Plus 的 ZIP 包路径
-zip.name=D:\\code\\RuoYi-Vue-Plus-5.X.zip
+zip.name=D:\\code\\RuoYi-Vue-Plus-5.X.zip    # ZIP 包路径（反斜杠需转义）
+package.name=com.yourcompany                   # 目标包名
+package.retain=sms4j,warm                      # 保留原始包名的模块
+project.name=MyProject                         # 项目名称
+project.version=1.0.0                          # 可选版本号
+target.path=D:\\output                         # 输出目录
+module.prefix.old=ruoyi                        # 模块名前缀替换（旧）
+module.prefix.new=myapp                        # 模块名前缀替换（新）
+module.map=ruoyi-admin:myapp-server            # 精确映射（优先级更高）
 ```
 
-## 核心架构
+## 架构
 
-### 核心组件架构
-
-- **RenameConfig**: 配置模型类
-- **ConfigLoader**: 配置加载与验证
-- **ContentReplacer**: 内容替换引擎
-- **PathCalculator**: 路径计算器
-- **PathUtils**: 路径工具类
-- **FileProcessor**: 文件处理器
-- **Main**: 主入口
-
-### 处理流程
-
-1. ConfigLoader 加载并验证配置
-2. ContentReplacer 根据模块类型处理内容替换
-3. PathCalculator 计算目标文件路径
-4. FileProcessor 执行文件读写操作
-
-### 主要处理流程
-
-程序的核心逻辑在 [Main.java](src/main/java/cn/baruto/Main.java) 中：
-
-1. **解压阶段**：将 RuoYi-Vue-Plus ZIP 包解压到 `temp/ruoyi_<timestamp>` 临时目录
-2. **遍历处理**：递归遍历所有文件，根据文件类型执行不同操作
-3. **包名替换**：将所有文件中的 `org.dromara` 替换为目标包名
-4. **目录重组**：重新构建符合新包名的目录结构（`src/main/java/<新包名>/`）
-5. **输出清理**：将结果输出到带时间戳的目标目录，删除临时文件
-
-### 文件处理策略
-
-| 文件类型 | 处理方法 |
-|---------|---------|
-| `pom.xml` | 替换 `org.dromara`，但保留 `sms4j` 的原始包名 |
-| `.java` | 替换包声明和 import 语句，保留 `sms4j` 原始包名 |
-| `Mapper.xml` | 替换 namespace 和类型引用 |
-| 其他文件 | 直接复制并替换内容中的包名引用 |
-
-### 关键依赖
-
-- **Hutool 5.8.28**：用于文件操作（`FileUtil`）、ZIP 解压（`ZipUtil`）、配置读取（`Props`）
-
-### 特殊处理
-
-`sms4j` 依赖需要保持原始包名 `org.dromara.sms4j`，代码中有特殊逻辑在替换后将 `sms4j` 的包名还原。
-
-## 目录结构
+### 包结构
 
 ```
-src/
-├── main/
-│   ├── java/cn/baruto/
-│   │   └── Main.java          # 主程序入口
-│   └── resources/
-│       └── setting.properties  # 配置文件
-temp/                           # 临时解压目录（运行时生成）
-target/                         # Maven 构建输出目录
+cn.baruto
+├── config/     配置层：RenameConfig（POJO）、ConfigLoader（加载验证）
+├── core/       核心层：ContentReplacer（替换引擎）、PathCalculator（路径计算）、PathUtils（路径工具）
+├── processor/  处理层：FileProcessor（文件读写协调）
+└── ui/         界面层：RenameApp（主窗口）、ModernUI（组件工厂）
 ```
+
+### 数据流
+
+```
+ConfigLoader → RenameConfig
+                    ↓
+ContentReplacer ← config（包名/模块名替换）
+PathCalculator  ← config（目录结构重组）
+FileProcessor   ← replacer + pathCalculator（协调读写）
+Main            → 解压ZIP → 遍历文件 → FileProcessor.processFile() → 输出
+```
+
+### 核心替换逻辑（ContentReplacer）
+
+1. **包名替换**：用 `\borg\.dromara(?=\.)` 正则匹配，替换为目标包名
+2. **保留还原**：将保留模块（sms4j、warm 等）的包名还原为 `org.dromara.xxx`
+3. **模块名替换**：先精确映射（moduleMap），再前缀替换（oldPrefix→newPrefix）
+
+### 模块名映射优先级
+
+精确映射（`module.map`）> 前缀替换（`module.prefix.old/new`）。PathCalculator 在计算路径时也遵循此优先级。
+
+### GUI 架构
+
+RenameApp 使用 Swing + SwingWorker，ModernUI 提供统一的组件工厂方法（颜色、圆角边框、渐变面板）。GUI 配置直接映射到 RenameConfig 字段。
+
+## 代码风格
+
+- Java 8 兼容，Maven 构建
+- 缩进 4 空格，左大括号同行
+- 注释使用中文
+- 导入顺序：项目内 → 外部库 → JDK 标准库，无通配符导入
+- 依赖注入通过构造函数
+- 异常使用 IllegalArgumentException 进行早期失败验证
+- 文件操作统一 UTF-8 编码
+- 路径统一通过 PathUtils.normalizePath 转为正斜杠
+
+## 关键依赖
+
+- Hutool 5.8.28：FileUtil、ZipUtil、Props
+- Apache Commons Lang3 3.14.0：字符串工具
+- SLF4J 2.0.9 + Logback 1.4.14：日志
+- JUnit 5 + Mockito 5.7：测试
 
 ## gstack
 
