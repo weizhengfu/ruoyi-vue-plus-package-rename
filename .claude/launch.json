@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "JavaFX GUI",
+      "runtimeExecutable": "mvn",
+      "runtimeArgs": ["javafx:run"],
+      "port": 0
+    },
+    {
+      "name": "CLI Mode",
+      "runtimeExecutable": "mvn",
+      "runtimeArgs": ["exec:java", "-Dexec.mainClass=cn.baruto.Main", "-Dexec.args=--cli"],
+      "port": 0
+    }
+  ]
+}

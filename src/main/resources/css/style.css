@@ -114,7 +114,7 @@
 /* === 表单卡片 === */
 .form-card {
     -fx-background-color: -card-bg;
-    -fx-background-radius: -radius;
+    -fx-background-radius: 8px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
     -fx-padding: 24;
     -fx-spacing: 16;

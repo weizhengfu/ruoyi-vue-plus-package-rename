@@ -15,7 +15,8 @@
       "Bash(findstr:*)",
       "Bash(wc:*)",
       "Bash(python \"C:\\\\Users\\\\33597\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"developer tool utility desktop sidebar dark-light\" --design-system -p \"RuoYi Package Renamer\")",
-      "Bash(python \"C:\\\\Users\\\\33597\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"sidebar navigation dashboard\" --domain ux -n 5)"
+      "Bash(python \"C:\\\\Users\\\\33597\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"sidebar navigation dashboard\" --domain ux -n 5)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
