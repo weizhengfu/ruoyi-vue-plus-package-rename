@@ -5,8 +5,8 @@ import cn.hutool.core.util.StrUtil;
 
 public class ContentReplacer {
     // 使用词边界正则表达式避免误匹配
-    // 例如：不匹配 "notorg.dromara.xyz" 中的 "org.dromara"
-    private static final String PACKAGE_PATTERN = "\\borg\\.dromara(?=\\.)";
+    // 匹配 org.dromara 后面跟着 . 或 ; 或 空白 或 行尾
+    private static final String PACKAGE_PATTERN = "\\borg\\.dromara(?=[\\.\\s;]|$)";
     private static final String PACKAGE_ESCAPE = "___PKG_REPLACED___";
 
     private final RenameConfig config;
