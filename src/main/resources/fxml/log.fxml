@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cn.baruto.ui.controller.LogController"
+      styleClass="content-area" spacing="0">
+
+    <Label styleClass="page-title" text="处理日志"/>
+    <Label styleClass="page-desc" text="查看包名修改的实时处理进度"/>
+
+    <VBox styleClass="form-card" spacing="12" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+        <Label styleClass="log-title" text="运行日志"/>
+
+        <TextArea fx:id="logArea" styleClass="log-area"
+                  editable="false" wrapText="true"
+                  VBox.vgrow="ALWAYS" prefRowCount="18"/>
+
+        <VBox spacing="6">
+            <ProgressBar fx:id="progressBar" styleClass="progress-bar"
+                         prefWidth="Infinity" progress="0" visible="false"/>
+            <Label fx:id="progressLabel" styleClass="progress-label" text="就绪"/>
+        </VBox>
+    </VBox>
+</VBox>

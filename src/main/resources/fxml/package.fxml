@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cn.baruto.ui.controller.PackageController"
+      styleClass="content-area" spacing="0">
+
+    <Label styleClass="page-title" text="包名配置"/>
+    <Label styleClass="page-desc" text="设置目标包名和需要保留原始包名的模块"/>
+
+    <VBox styleClass="form-card" spacing="16" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+        <VBox spacing="6">
+            <Label styleClass="form-label-required" text="目标包名 *"/>
+            <TextField fx:id="packageNameField" styleClass="form-input"
+                       promptText="com.example" text="com.example"/>
+            <Label styleClass="form-hint" text="将替换所有 org.dromara 包名"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label styleClass="form-label" text="保留模块"/>
+            <TextField fx:id="retainModulesField" styleClass="form-input"
+                       promptText="逗号分隔" text="sms4j,warm"/>
+            <Label styleClass="form-hint" text="保留原始包名的模块，逗号分隔，如 sms4j,warm"/>
+        </VBox>
+    </VBox>
+</VBox>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="cn.baruto.ui.controller.MainController"
+            stylesheets="@../css/style.css"
+            prefWidth="960" prefHeight="650"
+            minWidth="900" minHeight="650">
+
+    <left>
+        <VBox styleClass="sidebar" fx:id="sidebar">
+            <VBox styleClass="sidebar-logo" alignment="CENTER_LEFT"
+                  VBox.vgrow="NEVER" style="-fx-padding: 20 0 10 20;">
+                <Label styleClass="sidebar-logo-title" text="包名修改器"/>
+                <Label styleClass="sidebar-logo-subtitle" text="RuoYi-Vue-Plus"/>
+            </VBox>
+
+            <HBox style="-fx-background-color: #2D3A4F; -fx-pref-height: 1px;"/>
+
+            <VBox fx:id="navContainer" VBox.vgrow="ALWAYS" spacing="2"
+                  style="-fx-padding: 8 0 0 0;">
+                <Button fx:id="navSource" styleClass="sidebar-nav-item"
+                        text="源文件" onAction="#onNavClick"
+                        maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+                <Button fx:id="navPackage" styleClass="sidebar-nav-item"
+                        text="包名" onAction="#onNavClick"
+                        maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+                <Button fx:id="navProject" styleClass="sidebar-nav-item"
+                        text="项目" onAction="#onNavClick"
+                        maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+                <Button fx:id="navModule" styleClass="sidebar-nav-item"
+                        text="模块映射" onAction="#onNavClick"
+                        maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+                <Button fx:id="navLog" styleClass="sidebar-nav-item"
+                        text="处理日志" onAction="#onNavClick"
+                        maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="8" VBox.vgrow="NEVER"
+                  style="-fx-padding: 16 20 20 20;">
+                <Button fx:id="startButton" styleClass="start-button"
+                        text="开始处理" onAction="#onStartProcessing"/>
+                <Label styleClass="sidebar-version" text="v1.0"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <AnchorPane fx:id="contentArea" styleClass="content-area"/>
+    </center>
+</BorderPane>

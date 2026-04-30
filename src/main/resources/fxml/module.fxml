@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cn.baruto.ui.controller.ModuleController"
+      styleClass="content-area" spacing="0">
+
+    <Label styleClass="page-title" text="模块名映射配置"/>
+    <Label styleClass="page-desc" text="配置模块名的替换规则，用于重命名模块目录"/>
+
+    <VBox styleClass="form-card" spacing="16" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+        <VBox spacing="6">
+            <Label styleClass="form-label" text="前缀替换"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <TextField fx:id="oldPrefixField" styleClass="form-input"
+                           promptText="旧前缀" text="ruoyi" prefWidth="180"/>
+                <Label text="→" style="-fx-font-size: 16; -fx-text-fill: #94A3B8; -fx-font-weight: bold;"/>
+                <TextField fx:id="newPrefixField" styleClass="form-input"
+                           promptText="新前缀" text="myapp" prefWidth="180"/>
+            </HBox>
+            <Label styleClass="form-hint" text="将所有匹配前缀的模块名替换为新前缀"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label styleClass="form-label" text="精确映射"/>
+            <TextField fx:id="moduleMapField" styleClass="form-input"
+                       promptText="旧名:新名,旧名:新名"/>
+            <Label styleClass="form-hint" text="格式: 旧模块名:新模块名，逗号分隔。优先级高于前缀替换"/>
+        </VBox>
+    </VBox>
+</VBox>

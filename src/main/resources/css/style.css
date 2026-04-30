@@ -1,0 +1,222 @@
+/* === CSS 变量 === */
+.root {
+    -sidebar-bg: #1B2336;
+    -sidebar-width: 200px;
+    -content-bg: #F0F4F8;
+    -card-bg: #FFFFFF;
+    -accent: #3B82F6;
+    -accent-hover: #2563EB;
+    -success: #22C55E;
+    -danger: #EF4444;
+    -text-primary: #1E293B;
+    -text-secondary: #64748B;
+    -text-sidebar: #94A3B8;
+    -text-sidebar-active: #FFFFFF;
+    -sidebar-item-active-bg: #253350;
+    -border: #CBD5E1;
+    -border-focus: #3B82F6;
+    -log-bg: #1E293B;
+    -log-text: #A5D6A7;
+    -radius: 8px;
+}
+
+/* === 侧边栏 === */
+.sidebar {
+    -fx-background-color: -sidebar-bg;
+    -fx-pref-width: 200px;
+    -fx-min-width: 200px;
+}
+
+.sidebar-logo-title {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.sidebar-logo-subtitle {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748B;
+}
+
+.sidebar-nav-item {
+    -fx-background-color: transparent;
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: -text-sidebar;
+    -fx-cursor: hand;
+    -fx-padding: 10 16 10 20;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.sidebar-nav-item:hover {
+    -fx-background-color: #1E2A3E;
+    -fx-text-fill: white;
+}
+
+.sidebar-nav-item:selected {
+    -fx-background-color: -sidebar-item-active-bg;
+    -fx-text-fill: -text-sidebar-active;
+    -fx-border-color: transparent transparent transparent -accent;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.sidebar-version {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 11px;
+    -fx-text-fill: #475569;
+}
+
+/* === 开始处理按钮 === */
+.start-button {
+    -fx-background-color: -accent;
+    -fx-text-fill: white;
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 10 0 10 0;
+    -fx-pref-width: 160px;
+}
+
+.start-button:hover {
+    -fx-background-color: -accent-hover;
+}
+
+.start-button:disabled {
+    -fx-background-color: #94A3B8;
+    -fx-opacity: 0.7;
+}
+
+/* === 内容区 === */
+.content-area {
+    -fx-background-color: -content-bg;
+    -fx-padding: 24 30 24 30;
+}
+
+.page-title {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -accent;
+}
+
+.page-desc {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: -text-secondary;
+    -fx-padding: 4 0 16 0;
+}
+
+/* === 表单卡片 === */
+.form-card {
+    -fx-background-color: -card-bg;
+    -fx-background-radius: -radius;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+    -fx-padding: 24;
+    -fx-spacing: 16;
+}
+
+.form-label {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-primary;
+}
+
+.form-label-required {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-primary;
+}
+
+.form-input {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: -text-primary;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: -border;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-padding: 8 12 8 12;
+    -fx-pref-height: 36px;
+}
+
+.form-input:focused {
+    -fx-border-color: -border-focus;
+    -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.15), 6, 0, 0, 0);
+}
+
+.form-hint {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 11px;
+    -fx-text-fill: #94A3B8;
+}
+
+.browse-button {
+    -fx-background-color: white;
+    -fx-text-fill: -text-primary;
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 13px;
+    -fx-background-radius: 6px;
+    -fx-border-color: -border;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+    -fx-pref-height: 36px;
+}
+
+.browse-button:hover {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: -accent;
+}
+
+/* === 日志区域 === */
+.log-area {
+    -fx-font-family: "Consolas", "Monospace";
+    -fx-font-size: 12px;
+    -fx-text-fill: -log-text;
+    -fx-background-color: -log-bg;
+    -fx-background-radius: 6px;
+    -fx-border-color: #334155;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-padding: 12;
+    -fx-highlight-fill: #334155;
+    -fx-highlight-text-fill: -log-text;
+}
+
+.log-title {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -accent;
+}
+
+.progress-bar {
+    -fx-accent: -success;
+}
+
+.progress-bar .track {
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 6px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: -success;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+}
+
+.progress-label {
+    -fx-font-family: "Microsoft YaHei UI", "System";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-secondary;
+}

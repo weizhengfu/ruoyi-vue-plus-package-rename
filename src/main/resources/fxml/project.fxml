@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cn.baruto.ui.controller.ProjectController"
+      styleClass="content-area" spacing="0">
+
+    <Label styleClass="page-title" text="项目配置"/>
+    <Label styleClass="page-desc" text="设置项目名称和版本号"/>
+
+    <VBox styleClass="form-card" spacing="16" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+        <VBox spacing="6">
+            <Label styleClass="form-label-required" text="项目名称 *"/>
+            <TextField fx:id="projectNameField" styleClass="form-input"
+                       promptText="MyProject" text="MyProject"/>
+            <Label styleClass="form-hint" text="输出目录的子文件夹名称"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label styleClass="form-label" text="项目版本"/>
+            <TextField fx:id="projectVersionField" styleClass="form-input"
+                       promptText="1.0.0（可选）" text="1.0.0"/>
+            <Label styleClass="form-hint" text="留空则不创建版本子目录"/>
+        </VBox>
+    </VBox>
+</VBox>
